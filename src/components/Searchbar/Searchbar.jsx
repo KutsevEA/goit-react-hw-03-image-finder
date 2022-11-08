@@ -1,49 +1,53 @@
 import PropTypes from 'prop-types';
-import { Component } from 'react';
 
-export class Searchbar extends Component {
-  state = {
-    value: '',
+import { FaSearch } from 'react-icons/fa';
+import { Formik } from 'formik';
+import { toast, ToastContainer } from 'react-toastify';
+
+import {
+  SearchContainer,
+  SearchForm,
+  SearchButton,
+  SearchInput,
+} from './Searchbar.styled';
+
+export const Searchbar = ({ onSearch }) => {
+  const handleSubmit = ({ search }) => {
+    if (search === '') {
+      toast.error('Please enter search query!');
+      return;
+    }
+
+    onSearch(search);
   };
 
-  reset() {
-    this.setState({ value: '' });
-  }
+  return (
+    <SearchContainer>
+      <Formik initialValues={{ search: '' }} onSubmit={handleSubmit}>
+        <SearchForm autoComplete="off">
+          <SearchButton type="submit">
+            <FaSearch />
+          </SearchButton>
 
-  handleSubmit = e => {
-    e.preventDefault();
-    this.props.onSubmit(this.state);
-    this.reset();
-  };
-
-  handleInput = e => {
-      console.log(e.target.value);
-      this.setState({ value: e.target.value });
-  };
-
-  render() {
-    return (
-      <header>
-        <form onSubmit={this.handleSubmit}>
-          <button type="submit">
-            <span>Search</span>
-          </button>
-
-          <input
+          <SearchInput
             type="text"
-            autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            onChange={this.handleInput}
-            value={this.state.value}
+            name="search"
           />
-        </form>
-      </header>
-    );
-  }
-}
+        </SearchForm>
+      </Formik>
 
+      <ToastContainer
+        theme="light"
+        pauseOnHover={false}
+        autoClose={2000}
+        draggable={false}
+      />
+    </SearchContainer>
+  );
+};
 
 Searchbar.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onSearch: PropTypes.func.isRequired,
 };
